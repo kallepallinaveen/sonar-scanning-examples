@@ -11,5 +11,25 @@ pipeline{
                 sh "cd sonarqube-scanner-maven/maven-basic/;mvn test"
             }
         }
+        stage('Sonarqube Analysis') {
+            environment {
+              def scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {  
+                withSonarQubeEnv('sonarserver') {
+                    dir('sonarqube-scanner-maven/maven-basic') {
+                        sh "/opt/sonar/bin/sonar-scanner"
+                        //sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+                sleep time: 30000, unit: 'MILLISECONDS'
+                script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                }
+            }
+        }
     }
 }
