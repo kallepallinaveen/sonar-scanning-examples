@@ -17,10 +17,8 @@ pipeline{
             }
             steps {  
                 withSonarQubeEnv('sonarserver') {
-                    dir('sonarqube-scanner-maven/maven-basic') {
-                        sh "/opt/sonar/bin/sonar-scanner"
+                    sh "cd sonarqube-scanner-maven/maven-basic;/opt/sonar/bin/sonar-scanner"
                         //sh "${scannerHome}/bin/sonar-scanner"
-                    }
                 }
                 sleep time: 30000, unit: 'MILLISECONDS'
                 script {
